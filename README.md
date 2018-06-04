@@ -1,7 +1,8 @@
+FOR PRIVACY/CODE PROTECTING REASONS THIS IS A SIMPLIFIED VERSION OF CHANGES AND NEW FEATURE
+
 TASK DATE: 26.04.2018 - FINISHED: 08.05.2018
 
-TASK LEVEL: HARD (API calls)
-
+TASK LEVEL: HARD (API calls using JSON and REST API)
 
 TASK SHORT DESCRIPTION: [Automatic login to support site]
 
@@ -9,21 +10,18 @@ TASK SHORT DESCRIPTION: [Automatic login to support site]
 GITHUB REPOSITORY CODE: feature/support-site-sso
 
 
-ORIGINAL WORK: https://github.com/BusinessBecause/network-site/tree/feature/support-site-sso
-
-
 CHANGES
 
 	NEW FILES	
 	
-		\network-site\addons\shared_addons\modules\api\models\support_site_m.php
-		\network-site\addons\shared_addons\modules\api\controllers\support_site.php
-		\network-site\addons\shared_addons\modules\api\controllers\api_helper.php
+		- support_site_m.php
+		- support_site.php
+		- api_helper.php
 		
  
 	IN FILES: 
 	
-		\network-site\addons\default\modules\network_settings\controllers\network_settings.php
+		network_settings.php
 	
 			ADDED NEW function 
 			
@@ -39,21 +37,7 @@ CHANGES
 						echo $token;
 					}				
 					else {
-						//If we are over the first two checks then loading some necessary stuffs
-						$this->load->controller('api_helper', 'api');
-						$this->load->model('users/user_m');				
-						
-						//Initialization before API call
-						$this->api_helper->initilaziation(array(
-							'host' => 'http://test39.toucantech.com',
-							'api_class'	 => 'support_site'
-						));
-
-						//Getting user's data from DB
-						$user = $this->user_m->get( $this->session->userdata('id') );
-
-						//making a API call
-						$token = $this->api_helper->call($method = 'generateTokenToLogin', $params = array('username' => $user->username, 'password' => $user->password));
+						................
 					}
 
 					echo $token;
@@ -62,7 +46,7 @@ CHANGES
 	
 	
 	
-		\network-site\addons\default\themes\toucantechV2\views\partials\nb_header.html
+		nb_header.html
 		
 			CHANGED CODE:
 			
@@ -93,13 +77,12 @@ CHANGES
 					$(function()
 					{	
 						//small control for action of generating login token with API call
-						//after generating token - redirection to https://support.toucantech.com/users/login/<token>
 						//NOTE: token will be generated just in that case if user exists in both system with the same username and passwprd
 						if ($('.action-generate-login-token')[0]) {
 							$('.action-generate-login-token').live('click', function(event) {
 								event.preventDefault();
-								AJAX.call('network_settings/network_settings/ajaxGenerateLoginToken', {}, function(response) {
-									location.href = 'http://test39.toucantech.com/users/login/' + response;
+								AJAX.call('ajaxGenerateLoginToken', {}, function(response) {
+									location.href = '..../login/' + response;
 								});
 								return false;
 							})
@@ -108,7 +91,7 @@ CHANGES
 				</script>
 	
 	
-		\network-site\addons\default\modules\bbusers\models\bbuser_m.php
+		bbuser_m.php
 	
 			ADDED functions
 			
@@ -144,7 +127,7 @@ CHANGES
 	
 	
 	
-		\network-site\system\cms\modules\users\models\ion_auth_model.php
+		ion_auth_model.php
 	
 			CHANGED CODE I.:
 			
@@ -182,7 +165,7 @@ CHANGES
 	
 	
 	
-		\network-site\system\cms\modules\users\libraries\Ion_auth.php
+		Ion_auth.php
 
 			CHANGED CODE:
 			
@@ -198,7 +181,7 @@ CHANGES
 
 
 
-		\network-site\system\cms\modules\users\controllers\users.php
+		users.php
 		
 			ADDED CODE:
 			
@@ -222,7 +205,7 @@ CHANGES
 					
 		
 	
-		\network-site\addons\default\modules\bbusers\controllers\bbusers.php
+		bbusers.php
 
 			ADDED CODE:
 			
@@ -238,12 +221,7 @@ CHANGES
 							#getting user's data 
 							$usersData = $this->bbuser_m->get($userId);
 							
-							#setting some POST variables
-							$_POST['remote_login_token'] = $token;
-							$_POST['remote_login_user_id'] = $userId;
-							$_POST['remote_login_password'] = $usersData->password;
-							$_POST['email'] = $usersData->email;
-							$_POST['password'] = $token; #this is just fake - necessary for Form validation - but won't be used
+							................
 							
 							#set form_data for FORM validation
 							$this->form_validation->set_data($_POST);
@@ -256,7 +234,7 @@ CHANGES
 
 
 
-		\network-site\system\cms\modules\users\models\user_m.php
+		user_m.php
 		
 			ADDED CODE: 
 			
@@ -269,17 +247,8 @@ CHANGES
 					}
 
 
-
 		
-		\network-site\addons\shared_addons\modules\api\config\routes.php
-		
-			ADDED CODE:
-		
-				$route['api/support/site(/:any)?']		= 'support_site$1';
-		
-		
-		
-		\network-site\system\cms\config\rest.php
+		rest.php
 			
 			ADDED CODE:
 				
@@ -290,7 +259,7 @@ CHANGES
 		
 		
 		
-		\network-site\addons\shared_addons\modules\api\details.php
+		details.php
 		
 			ADDED NEW functions
 			
@@ -299,13 +268,7 @@ CHANGES
 					$table = $this->db->dbprefix('api_keys');
 					$date = date('Y-m-d H:i:s');
 					
-					if ( ! $this->db->value_exists('support_site_jk9lhjasdfhakjd', 'key', $table)) {
-					   $this->db->insert($table, array(
-							'created' => $date, 
-							'created_by' => '1',
-							'key' => 'support_site_jk9lhjasdfhakjd',
-						));
-					}
+					.................
 				} //END function _insertApiKeysTable
 
 				
@@ -313,11 +276,7 @@ CHANGES
 				private function _createTableApiLoginTokens()
 				{
 					$this->db->query(
-						"CREATE TABLE IF NOT EXISTS `" . $this->db->dbprefix("api_login_tokens") . "` ( " .
-						" `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, " .
-						" `token` varchar(20) NOT NULL,  " .
-						" `user_id` varchar(11) NOT NULL " .
-						") ENGINE=InnoDB  DEFAULT CHARSET=utf8;"
+						............
 					);	
 				} //END function _createTableApiLoginTokens				
 		
